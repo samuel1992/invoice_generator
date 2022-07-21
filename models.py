@@ -40,8 +40,7 @@ class Invoice:
 
     @property
     def due_date_str(self):
-        return '10/07/2022'
-        # return self.due_date.strftime("%d/%m/%Y")
+        return self.due_date.strftime("%d/%m/%Y")
 
     @property
     def issue_date_str(self):
@@ -49,8 +48,7 @@ class Invoice:
 
     @property
     def due_month(self):
-        return 'Maio'
-        #return MONTHS[self.due_date.month]
+        return MONTHS[self.due_date.month]
 
 
 @dataclass
