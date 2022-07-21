@@ -5,7 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <meta charset="UTF-8">
-    <title>{{client.name.replace(' ','_')}}_invoice_{{invoice.issue_date_str.replace('/','_')}}</title>
+    <title>FACOBRAS_INDUSTRIA_E_COMERCIO_LTDA_invoice_27_06_2022</title>
     <style>
         h6 {
             color: #7f7f7f;
@@ -75,17 +75,17 @@
             <div class="col col-sm-8">
                 <div class="form-field">
                     <h6>Cliente</h6>
-                    <h5>{{ client.name }}</h5>
+                    <h5>FACOBRAS INDUSTRIA E COMERCIO LTDA</h5>
                 </div>
 
                 <div class="form-field">
                     <h6>CPF/CNPJ</h6>
-                    <h5>{{ client.document }}</h5>
+                    <h5>60.691.***/****-14</h5>
                 </div>
 
                 <div class="form-field">
                     <h6>Endereço</h6>
-                    <h5>{{ client.address }}</h5>
+                    <h5>Avenida Cachoeira, 667, Barueri/SP</h5>
                 </div>
             </div>
             <!-- /dados do cliente -->
@@ -97,7 +97,7 @@
                         CEDENTE
                     </h6>
                     <h5>
-                        {{ company.name }}
+                        VILI TECNOLOGIA LTDA
                     </h5>
                 </div>
 
@@ -106,7 +106,7 @@
                         CPF/CNPJ CEDENTE
                     </h6>
                     <h5>
-                        {{ company.document }}
+                        24.935.528/0001-10
                     </h5>
                 </div>
 
@@ -115,7 +115,7 @@
                         ENDEREÇO
                     </h6>
                     <h5>
-                        {{ company.address }}
+                        R CARMEM MIRANDA, Carapicuíba/SP, 06395420
                     </h5>
                 </div>
             </div>
@@ -124,10 +124,10 @@
 
         <div class="row">
             <div class="col col-sm-8 invoice-identifier">
-                IDENTIFICAÇÃO DA FATURA {{ invoice.id }}
+                IDENTIFICAÇÃO DA FATURA 9f79d5ee-1c48-4f31-8d7c-16f653bd7594
             </div>
             <div class="col col-sm-4 issue-date">
-                DATA DE EMISSAO: {{ invoice.issue_date_str }}
+                DATA DE EMISSAO: 27/06/2022
             </div>
         </div>
 
@@ -137,7 +137,7 @@
             </div>
             <div class="col col-sm-4" style="text-align: right">
                 <h6>Vencimento</h6>
-                <h3>{{ invoice.due_date_str }}</h3>
+                <h3>30/06/2022</h3>
             </div>
         </div>
 
@@ -152,24 +152,24 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>Referente: Contrato / {{ invoice.due_month }}</td>
+                    <td>Referente: Contrato / Junho</td>
                     <td></td>
-                    <td>R$ {{ invoice.total }}</td>
+                    <td>R$ 1000.0</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Subtotal</td>
-                    <td>R$ {{ invoice.sub_total }}</td>
+                    <td>R$ 1000.0</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Desconto</td>
-                    <td>R$ {{ invoice.discount }}</td>
+                    <td>R$ 0.0</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Multa/Juros</td>
-                    <td>R$ {{ invoice.penalty }}</td>
+                    <td>R$ 0.0</td>
                 </tr>
             </tbody>
         </table>
