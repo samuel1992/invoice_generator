@@ -2,6 +2,8 @@ import datetime
 import os
 import uuid
 import jinja2
+import json
+import argparse
 
 from models import Company, Client, Invoice
 
@@ -23,35 +25,59 @@ def last_day_of_month(any_day):
     return next_month - datetime.timedelta(days=next_month.day)
 
 
-def generate_facobras_invoice():
-    facobras = Client(
-        name='FACOBRAS INDUSTRIA E COMERCIO LTDA',
-        document='60.691.***/****-14',
-        address='Avenida Cachoeira, 667, Barueri/SP'
-    )
+DUE_DATES = {
+    'last_day_of_month': last_day_of_month
+    # 'specified_bunisess_day': business_day
+}
 
+
+def generate_invoice(client_name, client_data):
     vili = Company()
 
+    facobras = Client(
+        name=client_data['name'],
+        document=client_data['document'],
+        address=client_data['address']
+    )
+
+    due_date_function = DUE_DATES[client_data['invoice_data']['due_date']]
+    today = datetime.date.today()
     invoice = Invoice(
         id=uuid.uuid4(),
-        total=1000.00,
-        sub_total=1000.00,
-        discount=0.00,
-        penalty=0.00,
-        due_date=last_day_of_month(datetime.date.today()),
-        issue_date=datetime.date.today()
+        total=client_data['invoice_data']['total'],
+        sub_total=client_data['invoice_data']['sub_total'],
+        discount=client_data['invoice_data']['discount'],
+        penalty=client_data['invoice_data']['penalty'],
+        due_date=due_date_function(today),
+        issue_date=today
     )
 
     content = INVOICE.render(client=facobras, company=vili, invoice=invoice)
 
-    invoice_file = f'{os.path.dirname(__file__)}/invoices/facobras_{datetime.date.today()}_{invoice.id}.html'
+    invoice_file = (
+        f'{os.path.dirname(__file__)}/'
+        f'invoices/{client_name}_{today}_{invoice.id}.html'
+    )
     with open(invoice_file, 'a') as file:
         file.write(content)
 
     return invoice_file
 
 
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--client-name', help='The client to generate invoice')
+    args = parser.parse_args()
+
+    client_name = args.client_name
+    data = json.load(open('data.json', 'r'))
+    client_data = data.get(client_name)
+    if not client_data:
+        raise Exception(f'No client {client_name} found in our data.json')
+
+    print(f'{client_name}',
+          f'file:///{generate_invoice(client_name, client_data)}')
+
+
 if __name__ == '__main__':
-    print('FACOBRAS',
-          datetime.date.today(),
-          'file:///' + generate_facobras_invoice())
+    main()
