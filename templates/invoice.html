@@ -151,25 +151,55 @@
                 </tr>
             </thead>
             <tbody>
+                {% for product in invoice.products %}
                 <tr>
-                    <td>Referente: Contrato / {{ invoice.due_month }}</td>
+                    <td>{{ product.name }}</td>
+                    <td></td>
+                    <td>R$ {{ product.total }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>
+                      <svg height="40" width="100%">
+                        <g fill="none" stroke-width="6" stroke="#EDEAE3">
+                        <path d="M0 22 800 22" stroke-dasharray="0.05, 9.05" stroke-linecap="round"></path>
+                        </g>
+                      </svg>
+                    </td>
+                    <td>
+                      <svg height="40" width="100%">
+                        <g fill="none" stroke-width="6" stroke="#EDEAE3">
+                        <path d="M0 22 800 22" stroke-dasharray="0.05, 9.05" stroke-linecap="round"></path>
+                        </g>
+                      </svg>
+                    </td>
+                    <td>
+                      <svg height="40" width="100%">
+                        <g fill="none" stroke-width="6" stroke="#EDEAE3">
+                        <path d="M0 22 800 22" stroke-dasharray="0.05, 9.05" stroke-linecap="round"></path>
+                        </g>
+                      </svg>
+                    </td>
+                </tr>
+                <tr>
+                  <td><b>Referente: Contrato / {{ invoice.due_month }}</b></td>
                     <td></td>
                     <td>R$ {{ invoice.total }}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>Subtotal</td>
-                    <td>R$ {{ invoice.sub_total }}</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>Desconto</td>
+                    <td><b>Desconto</b></td>
                     <td>R$ {{ invoice.discount }}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>Multa/Juros</td>
+                    <td><b>Multa/Juros</b></td>
                     <td>R$ {{ invoice.penalty }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><b>Subtotal</b></td>
+                    <td>R$ {{ invoice.sub_total }}</td>
                 </tr>
             </tbody>
         </table>

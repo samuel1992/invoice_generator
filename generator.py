@@ -5,7 +5,7 @@ import jinja2
 import json
 import argparse
 
-from models import Company, Client, Invoice
+from models import Company, Client, Invoice, Product
 
 
 env = jinja2.Environment(
@@ -25,8 +25,14 @@ def last_day_of_month(any_day):
     return next_month - datetime.timedelta(days=next_month.day)
 
 
+def next_month_fifth(any_day):
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    return next_month - datetime.timedelta(days=next_month.day - 5)
+
+
 DUE_DATES = {
-    'last_day_of_month': last_day_of_month
+    'last_day_of_month': last_day_of_month,
+    'next_month_fifth': next_month_fifth,
     # 'specified_bunisess_day': business_day
 }
 
@@ -42,14 +48,27 @@ def generate_invoice(client_name, client_data):
 
     due_date_function = DUE_DATES[client_data['invoice_data']['due_date']]
     today = datetime.date.today()
+    total = sum(i['total'] for i in client_data['invoice_data']['products'])
+    sub_total = sum(
+        i['sub_total'] for i in client_data['invoice_data']['products']
+    )
+    discount = sum(
+        i['discount'] for i in client_data['invoice_data']['products']
+    )
+    penalty = sum(
+        i['penalty'] for i in client_data['invoice_data']['products']
+    )
+    products = [Product(name=i['name'], total=i['total']) for i in
+                client_data['invoice_data']['products']]
     invoice = Invoice(
         id=uuid.uuid4(),
-        total=client_data['invoice_data']['total'],
-        sub_total=client_data['invoice_data']['sub_total'],
-        discount=client_data['invoice_data']['discount'],
-        penalty=client_data['invoice_data']['penalty'],
+        total=total,
+        sub_total=sub_total,
+        discount=discount,
+        penalty=penalty,
         due_date=due_date_function(today),
-        issue_date=today
+        issue_date=today,
+        products=products
     )
 
     content = INVOICE.render(client=facobras, company=vili, invoice=invoice)
@@ -75,8 +94,8 @@ def main():
     if not client_data:
         raise Exception(f'No client {client_name} found in our data.json')
 
-    print(f'{client_name}',
-          f'file:///{generate_invoice(client_name, client_data)}')
+    invoice = generate_invoice(client_name, client_data)
+    print(f'{client_name}', f'file:///{invoice}')
 
 
 if __name__ == '__main__':

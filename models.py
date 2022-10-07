@@ -4,6 +4,8 @@ import uuid
 
 from dataclasses import dataclass
 
+from typing import List
+
 MONTHS = (
     '',
     'Janeiro',
@@ -29,6 +31,12 @@ class Company:
 
 
 @dataclass
+class Product:
+    name: str
+    total: decimal
+
+
+@dataclass
 class Invoice:
     id: uuid.UUID
     total: decimal
@@ -37,6 +45,7 @@ class Invoice:
     penalty: decimal
     due_date: datetime.date
     issue_date: datetime.date
+    products: List[Product]
 
     @property
     def due_date_str(self):
