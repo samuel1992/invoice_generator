@@ -60,13 +60,14 @@ def generate_invoice(client_name, client_data):
     )
     products = [Product(name=i['name'], total=i['total']) for i in
                 client_data['invoice_data']['products']]
+    due_date = due_date_function(today)
     invoice = Invoice(
         id=uuid.uuid4(),
         total=total,
         sub_total=sub_total,
         discount=discount,
         penalty=penalty,
-        due_date=due_date_function(today),
+        due_date=due_date,
         issue_date=today,
         products=products
     )
@@ -75,7 +76,7 @@ def generate_invoice(client_name, client_data):
 
     invoice_file = (
         f'{os.path.dirname(__file__)}/'
-        f'invoices/{client_name}_{today}_{invoice.id}.html'
+        f'invoices/{client_name}_{today}_{due_date}_{invoice.id}.html'
     )
     with open(invoice_file, 'a') as file:
         file.write(content)
