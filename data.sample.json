@@ -1,0 +1,31 @@
+# SAMPLE data. Remove the comentaries and update the client/products stuff
+# after data rename this file to `data.json`
+# be happy
+
+{
+    "someclient": {
+        "name": "some client name",
+        "document": "XX.XX.***/****-XX",
+        "address": "Some adress here, 33",
+        "invoice_data":{
+          "products": [
+            {
+              "name": "PABX",
+              "total": 600.00,
+              "sub_total": 600.00,
+              "discount": 0.00,
+              "penalty": 0.00
+            },
+            {
+              "name": "Infraestrutura em Cloud",
+              "total": 200.00,
+              "sub_total": 200.00,
+              "discount": 0.00,
+              "penalty": 0.00
+            }
+          ],
+          "due_date": "last_day_of_month" # Options here are `next_day_of_month` or `next_month_fifth`
+        }
+    }
+}
+  
