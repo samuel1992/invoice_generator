@@ -40,7 +40,7 @@ DUE_DATES = {
 def generate_invoice(client_name, client_data):
     vili = Company()
 
-    facobras = Client(
+    client = Client(
         name=client_data['name'],
         document=client_data['document'],
         address=client_data['address']
@@ -72,7 +72,7 @@ def generate_invoice(client_name, client_data):
         products=products
     )
 
-    content = INVOICE.render(client=facobras, company=vili, invoice=invoice)
+    content = INVOICE.render(client=client, company=vili, invoice=invoice)
 
     invoice_file = (
         f'{os.path.dirname(__file__)}/'
