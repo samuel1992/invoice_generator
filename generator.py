@@ -105,7 +105,8 @@ def main():
     invoice = generate_invoice(
         client_name, client_data, company_data, template, invoice_number
     )
-    print(f"{client_name}", f"file:///{invoice}")
+    print(f"GENERATED INVOICE FOR {client_name}", f"file:///{invoice}")
+    os.system(f"open -a 'Google Chrome' file:///{invoice}")
 
 
 if __name__ == "__main__":
