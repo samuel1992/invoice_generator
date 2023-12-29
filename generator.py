@@ -90,11 +90,16 @@ def main():
     client_name = args.client_name
     invoice_number = args.invoice_number
     template = args.template
+
     data = json.load(open("data.json", "r"))
     client_data = data.get(client_name)
     company_data = data.get("mycompany")
+
     if not client_data:
         raise Exception(f"No client {client_name} found in our data.json")
+
+    if not company_data:
+        raise Exception("No company found in our data.json")
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(f"{os.path.dirname(__file__)}/templates/"),
@@ -105,6 +110,7 @@ def main():
     invoice = generate_invoice(
         client_name, client_data, company_data, template, invoice_number
     )
+
     print(f"GENERATED INVOICE FOR {client_name}", f"file:///{invoice}")
     os.system(f"open -a 'Google Chrome' file:///{invoice}")
 

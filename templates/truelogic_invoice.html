@@ -128,7 +128,28 @@
           </div>
         </div>
         <!-- /dados do cliente -->
-      </div>
+      </div> 
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col"></th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in invoice.products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td></td>
+            <td>$ {{ product.total }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <br>
 
       <div class="row bank-details" style="padding-top: 10px">
         <h4>Remit To</h4>
@@ -172,31 +193,12 @@
             </tr>
           </tbody>
         </table>
-      </div> 
+      </div>
 
       <br>
+      <br>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Product</th>
-            <th scope="col"></th>
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for product in invoice.products %}
-          <tr>
-            <td>{{ product.name }}</td>
-            <td></td>
-            <td>$ {{ product.total }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <br>
-      <br>
-      <h4 class="bigger" style="text-align: right">Invoice Total: ${{ invoice.total }}</h4>
+      <h4 class="bigger" style="text-align: right">Invoice Total: $ {{ invoice.total }}</h4>
     </div>
   </body>
 </html>
