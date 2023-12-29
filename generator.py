@@ -1,18 +1,12 @@
+import argparse
 import datetime
+import json
 import os
 import uuid
+
 import jinja2
-import json
-import argparse
 
-from models import Company, Client, Invoice, Product
-
-
-env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(f'{os.path.dirname(__file__)}/templates/'),
-    autoescape=jinja2.select_autoescape()
-)
-INVOICE = env.get_template('invoice.html')
+from models import Client, Company, Invoice, Product
 
 
 def last_day_of_month(any_day):
@@ -31,54 +25,56 @@ def next_month_fifth(any_day):
 
 
 DUE_DATES = {
-    'last_day_of_month': last_day_of_month,
-    'next_month_fifth': next_month_fifth,
+    "last_day_of_month": last_day_of_month,
+    "next_month_fifth": next_month_fifth,
     # 'specified_bunisess_day': business_day
 }
 
 
-def generate_invoice(client_name, client_data):
-    vili = Company()
+def generate_invoice(
+    client_name, client_data, company_data, template, invoice_number=0
+):
+    vili = Company(
+        name=company_data["name"],
+        document=company_data["document"],
+        address=company_data["address"],
+    )
 
     client = Client(
-        name=client_data['name'],
-        document=client_data['document'],
-        address=client_data['address']
+        name=client_data["name"],
+        document=client_data["document"],
+        address=client_data["address"],
     )
 
-    due_date_function = DUE_DATES[client_data['invoice_data']['due_date']]
+    due_date_function = DUE_DATES[client_data["invoice_data"]["due_date"]]
     today = datetime.date.today()
-    total = sum(i['total'] for i in client_data['invoice_data']['products'])
-    sub_total = sum(
-        i['sub_total'] for i in client_data['invoice_data']['products']
-    )
-    discount = sum(
-        i['discount'] for i in client_data['invoice_data']['products']
-    )
-    penalty = sum(
-        i['penalty'] for i in client_data['invoice_data']['products']
-    )
-    products = [Product(name=i['name'], total=i['total']) for i in
-                client_data['invoice_data']['products']]
+    total = sum(i["total"] for i in client_data["invoice_data"]["products"])
+    sub_total = sum(i["sub_total"] for i in client_data["invoice_data"]["products"])
+    discount = sum(i["discount"] for i in client_data["invoice_data"]["products"])
+    penalty = sum(i["penalty"] for i in client_data["invoice_data"]["products"])
+    products = [
+        Product(name=i["name"], total=i["total"])
+        for i in client_data["invoice_data"]["products"]
+    ]
     due_date = due_date_function(today)
     invoice = Invoice(
-        id=uuid.uuid4(),
+        id=invoice_number or uuid.uuid4(),
         total=total,
         sub_total=sub_total,
         discount=discount,
         penalty=penalty,
         due_date=due_date,
         issue_date=today,
-        products=products
+        products=products,
     )
 
-    content = INVOICE.render(client=client, company=vili, invoice=invoice)
+    content = template.render(client=client, company=vili, invoice=invoice)
 
     invoice_file = (
-        f'{os.path.dirname(__file__)}/'
-        f'invoices/{client_name}_{today}_{due_date}_{invoice.id}.html'
+        f"{os.path.dirname(__file__)}/"
+        f"invoices/{client_name}_{today}_{due_date}_{invoice.id}.html"
     )
-    with open(invoice_file, 'a') as file:
+    with open(invoice_file, "a") as file:
         file.write(content)
 
     return invoice_file
@@ -86,18 +82,31 @@ def generate_invoice(client_name, client_data):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--client-name', help='The client to generate invoice')
+    parser.add_argument("--client-name", help="The client to generate invoice")
+    parser.add_argument("--invoice-number", help="Invoice number")
+    parser.add_argument("--template", help="Template for invoice")
     args = parser.parse_args()
 
     client_name = args.client_name
-    data = json.load(open('data.json', 'r'))
+    invoice_number = args.invoice_number
+    template = args.template
+    data = json.load(open("data.json", "r"))
     client_data = data.get(client_name)
+    company_data = data.get("mycompany")
     if not client_data:
-        raise Exception(f'No client {client_name} found in our data.json')
+        raise Exception(f"No client {client_name} found in our data.json")
 
-    invoice = generate_invoice(client_name, client_data)
-    print(f'{client_name}', f'file:///{invoice}')
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(f"{os.path.dirname(__file__)}/templates/"),
+        autoescape=jinja2.select_autoescape(),
+    )
+    template = env.get_template(template)
+
+    invoice = generate_invoice(
+        client_name, client_data, company_data, template, invoice_number
+    )
+    print(f"{client_name}", f"file:///{invoice}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

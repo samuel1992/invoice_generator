@@ -25,9 +25,9 @@ MONTHS = (
 
 @dataclass
 class Company:
-    name: str = 'VILI TECNOLOGIA LTDA'
-    document: str = '24.935.528/0001-10'
-    address: str = 'R CARMEM MIRANDA, Carapicuíba/SP, 06395420'
+    name: str = ''
+    document: str = ''
+    address: str = ''
 
 
 @dataclass

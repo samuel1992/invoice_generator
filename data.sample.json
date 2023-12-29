@@ -3,6 +3,11 @@
 # be happy
 
 {
+    "mycompany": { # THIS SHOULD ALWAYS EXIST WITH YOUR COMPANY DETAILS
+      "name": "My company name ltda",
+      "document": "000.000.000-00",
+      "address": "Av Something, 10, Brazil - SP"
+    },
     "someclient": {
         "name": "some client name",
         "document": "XX.XX.***/****-XX",
