@@ -9,12 +9,12 @@ from dateutil import relativedelta
 
 from models import Client, Company, Invoice, Product
 
+TODAY = datetime.date.today()
 
 def last_day_of_month():
-    today = datetime.date.today()
     # this will never fail
     # get close to the end of the month for any day, and add 4 days 'over'
-    next_month = today.replace(day=28) + datetime.timedelta(days=4)
+    next_month = TODAY.replace(day=28) + datetime.timedelta(days=4)
     # subtract the number of remaining 'overage' days to get last day of
     # current month, or said programattically said, the previous day of
     # the first of next month
@@ -22,8 +22,7 @@ def last_day_of_month():
 
 
 def next_month_at(day):
-    today = datetime.date.today()
-    next_month = today.replace(day=28) + datetime.timedelta(days=4)
+    next_month = TODAY.replace(day=28) + datetime.timedelta(days=4)
     return next_month - datetime.timedelta(days=next_month.day - int(day))
 
 
@@ -32,8 +31,7 @@ def specific_date(any_date: str):
 
 
 def in_months(months):
-    today = datetime.date.today()
-    return today + relativedelta.relativedelta(months=int(months))
+    return TODAY + relativedelta.relativedelta(months=int(months))
 
 
 DUE_DATES = {
@@ -117,7 +115,7 @@ def generate_invoice(
         discount=discount,
         penalty=penalty,
         due_date=due_date,
-        issue_date=today,
+        issue_date=TODAY,
         products=products,
     )
 
@@ -132,7 +130,7 @@ def generate_invoice(
 
     invoice_file = (
         f"{os.path.dirname(__file__)}/"
-        f"invoices/{client_name}_{today}_{due_date}_{invoice.id}.html"
+        f"invoices/{client_name}_{TODAY}_{due_date}_{invoice.id}.html"
     )
     with open(invoice_file, "a") as file:
         file.write(content)
