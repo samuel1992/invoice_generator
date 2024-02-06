@@ -58,10 +58,3 @@ class Invoice:
     @property
     def due_month(self):
         return MONTHS[self.due_date.month]
-
-
-@dataclass
-class Client:
-    name: str
-    document: str
-    address: str

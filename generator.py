@@ -7,7 +7,7 @@ import uuid
 import jinja2
 from dateutil import relativedelta
 
-from models import Client, Company, Invoice, Product
+from models import Company, Invoice, Product
 
 TODAY = datetime.date.today()
 
@@ -68,7 +68,7 @@ def generate_invoice(
         address=company_data["address"],
     )
 
-    client = Client(
+    client = Company(
         name=client_data["name"],
         document=client_data["document"],
         address=client_data["address"],
