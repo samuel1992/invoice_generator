@@ -10,32 +10,35 @@ from dateutil import relativedelta
 from models import Client, Company, Invoice, Product
 
 
-def last_day_of_month(any_day):
+def last_day_of_month():
+    today = datetime.date.today()
     # this will never fail
     # get close to the end of the month for any day, and add 4 days 'over'
-    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    next_month = today.replace(day=28) + datetime.timedelta(days=4)
     # subtract the number of remaining 'overage' days to get last day of
     # current month, or said programattically said, the previous day of
     # the first of next month
     return next_month - datetime.timedelta(days=next_month.day)
 
 
-def next_month_fifth(any_day):
-    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
-    return next_month - datetime.timedelta(days=next_month.day - 5)
+def next_month_at(day):
+    today = datetime.date.today()
+    next_month = today.replace(day=28) + datetime.timedelta(days=4)
+    return next_month - datetime.timedelta(days=next_month.day - int(day))
 
 
 def specific_date(any_date: str):
     return datetime.datetime.strptime(any_date, "%Y-%m-%d").date()
 
 
-def in_months(any_day, months):
-    return any_day + relativedelta.relativedelta(months=int(months))
+def in_months(months):
+    today = datetime.date.today()
+    return today + relativedelta.relativedelta(months=int(months))
 
 
 DUE_DATES = {
     "last_day_of_month": last_day_of_month,
-    "next_month_fifth": next_month_fifth,
+    "next_month_at": next_month_at,
     "specific_date": specific_date,
     "in_months": in_months,
 }
@@ -77,7 +80,6 @@ def generate_invoice(
         client_data["due_date"]
     )
 
-    today = datetime.date.today()
     sub_total = sum(
         (products_data[p]["price"] * products_data[p]["quantity"])
         for p in client_data["products"]
@@ -103,9 +105,9 @@ def generate_invoice(
     ]
 
     due_date = (
-        due_date_function(today, due_date_arg)
+        due_date_function(due_date_arg)
         if due_date_arg is not None
-        else due_date_function(today)
+        else due_date_function()
     )
 
     invoice = Invoice(
