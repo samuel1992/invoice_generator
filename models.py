@@ -1,48 +1,48 @@
 import datetime
 import decimal
 import uuid
-
 from dataclasses import dataclass
-
 from typing import List
 
 MONTHS = (
-    '',
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro'
+    "",
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
 )
 
 
 @dataclass
 class Company:
-    name: str = ''
-    document: str = ''
-    address: str = ''
+    name: str = ""
+    document: str = ""
+    address: str = ""
 
 
 @dataclass
 class Product:
     name: str
-    total: decimal
+    description: str
+    quantity: int
+    price: decimal.Decimal
 
 
 @dataclass
 class Invoice:
     id: uuid.UUID
-    total: decimal
-    sub_total: decimal
-    discount: decimal
-    penalty: decimal
+    total: decimal.Decimal
+    sub_total: decimal.Decimal
+    discount: decimal.Decimal
+    penalty: decimal.Decimal
     due_date: datetime.date
     issue_date: datetime.date
     products: List[Product]

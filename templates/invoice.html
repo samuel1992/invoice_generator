@@ -90,7 +90,7 @@
             </div>
             <!-- /dados do cliente -->
 
-            <!-- dados da vili -->
+            <!-- dados da minha empresa -->
             <div class="col col-sm-4">
                 <div class="form-field">
                     <h6>
@@ -119,7 +119,7 @@
                     </h5>
                 </div>
             </div>
-            <!-- /dados da vili -->
+            <!-- /dados da minha empresa -->
         </div>
 
         <div class="row">
@@ -145,7 +145,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">Descrição</th>
+                    <th scope="col">Produto</th>
                     <th scope="col"></th>
                     <th scope="col">Valor</th>
                 </tr>
@@ -155,7 +155,7 @@
                 <tr>
                     <td>{{ product.name }}</td>
                     <td></td>
-                    <td>R$ {{ product.total }}</td>
+                    <td>R$ {{ product.price * product.quantity }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -212,26 +212,16 @@
 
         <h4>Dados para depósito bancário</h4>
         <div class="bank-details">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td><b>#</b></td>
-                        <td style="text-align: right">VILI TECNOLOGIA LDTA</td>
-                    </tr>
-                    <tr>
-                        <td><b>CPNJ</b></td>
-                        <td style="text-align: right">24.935.528/0001-10</td>
-                    </tr>
-                    <tr>
-                        <td><b>Ag.:</b></td>
-                        <td style="text-align: right">0083</td>
-                    </tr>
-                    <tr>
-                        <td><b>Cc.:</b></td>
-                        <td style="text-align: right">13007525-2</td>
-                    </tr>
-                </tbody>
-            </table>
+        <table class="table">
+          <tbody>
+            {% for line in bank_account_details %}
+            <tr>
+              <td><b>{{ line['key'] }}:</b></td>
+              <td style="text-align: right">{{ line['value'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
         </div>
     </div>
 </body>

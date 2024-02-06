@@ -134,16 +134,24 @@
         <thead>
           <tr>
             <th scope="col">Product</th>
-            <th scope="col"></th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
             <th scope="col">Total</th>
           </tr>
         </thead>
         <tbody>
           {% for product in invoice.products %}
           <tr>
-            <td>{{ product.name }}</td>
-            <td></td>
-            <td>$ {{ product.total }}</td>
+            <td>
+              {{ product.name }}
+              {% if product.description is not none %}
+                <br>
+                ({{product.description}})
+              {% endif %}
+            </td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.price }}</td>
+            <td>$ {{ product.price * product.quantity }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -155,42 +163,12 @@
         <h4>Remit To</h4>
         <table class="table">
           <tbody>
-            <tr >
-              <td><b>Type:</b></td>
-              <td style="text-align: right">Banking Account</td>
-            </tr>
+            {% for line in bank_account_details %}
             <tr>
-              <td><b>Account Holder:</b></td>
-              <td style="text-align: right">SAMUEL VIEIRA DANTAS</td>
+              <td><b>{{ line['key'] }}:</b></td>
+              <td style="text-align: right">{{ line['value'] }}</td>
             </tr>
-            <tr>
-              <td><b>WIRE Routing Number:</b></td>
-              <td style="text-align: right">026073008</td>
-            </tr>
-            <tr>
-              <td><b>ACH Routing Number:</b></td>
-              <td style="text-align: right">026073150</td>
-            </tr>
-            <tr>
-              <td><b>Bank Code:</b></td>
-              <td style="text-align: right">Community Federal Savings Bank</td>
-            </tr>
-            <tr>
-              <td><b>Account:</b></td>
-              <td style="text-align: right">652112674963</td>
-            </tr>
-            <tr>
-              <td><b>Bank Address:</b></td>
-              <td style="text-align: right">8916 Jamaica Ave, Woodhaven, NY 11421</td>
-            </tr>
-            <tr>
-              <td><b>Personal Address:</b></td>
-              <td style="text-align: right">
-                Avenida Albert Bartholome 434 tulipa apto 105,
-                <br>
-                  Jardim das Vertentes, São Paulo, SP 05541-000
-              </td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

@@ -5,6 +5,7 @@ import os
 import uuid
 
 import jinja2
+from dateutil import relativedelta
 
 from models import Client, Company, Invoice, Product
 
@@ -24,17 +25,43 @@ def next_month_fifth(any_day):
     return next_month - datetime.timedelta(days=next_month.day - 5)
 
 
+def specific_date(any_date: str):
+    return datetime.datetime.strptime(any_date, "%Y-%m-%d").date()
+
+
+def in_months(any_day, months):
+    return any_day + relativedelta.relativedelta(months=int(months))
+
+
 DUE_DATES = {
     "last_day_of_month": last_day_of_month,
     "next_month_fifth": next_month_fifth,
-    # 'specified_bunisess_day': business_day
+    "specific_date": specific_date,
+    "in_months": in_months,
 }
 
 
+def _get_due_date_function_and_arg(due_date):
+    due_date_function_name = due_date.split("-")
+    if len(due_date_function_name) > 1:
+        due_date_function = DUE_DATES[due_date_function_name[0]]
+        due_date_arg = due_date_function_name[1]
+    else:
+        due_date_function = DUE_DATES[due_date]
+        due_date_arg = None
+    return due_date_function, due_date_arg
+
+
 def generate_invoice(
-    client_name, client_data, company_data, template, invoice_number=0
+    client_name,
+    client_data,
+    company_data,
+    products_data,
+    bank_accounts_data,
+    template,
+    invoice_number=0,
 ):
-    vili = Company(
+    my_company = Company(
         name=company_data["name"],
         document=company_data["document"],
         address=company_data["address"],
@@ -46,17 +73,41 @@ def generate_invoice(
         address=client_data["address"],
     )
 
-    due_date_function = DUE_DATES[client_data["invoice_data"]["due_date"]]
+    due_date_function, due_date_arg = _get_due_date_function_and_arg(
+        client_data["due_date"]
+    )
+
     today = datetime.date.today()
-    total = sum(i["total"] for i in client_data["invoice_data"]["products"])
-    sub_total = sum(i["sub_total"] for i in client_data["invoice_data"]["products"])
-    discount = sum(i["discount"] for i in client_data["invoice_data"]["products"])
-    penalty = sum(i["penalty"] for i in client_data["invoice_data"]["products"])
+    sub_total = sum(
+        (products_data[p]["price"] * products_data[p]["quantity"])
+        for p in client_data["products"]
+    )
+    discount = client_data["discount"]
+    penalty = client_data["penalty"]
+    total = (
+        sum(
+            (products_data[p]["price"] * products_data[p]["quantity"])
+            for p in client_data["products"]
+        )
+        - discount
+        + penalty
+    )
     products = [
-        Product(name=i["name"], total=i["total"])
-        for i in client_data["invoice_data"]["products"]
+        Product(
+            name=products_data[p]["name"],
+            description=products_data[p]["description"],
+            quantity=products_data[p]["quantity"],
+            price=products_data[p]["price"],
+        )
+        for p in client_data["products"]
     ]
-    due_date = due_date_function(today)
+
+    due_date = (
+        due_date_function(today, due_date_arg)
+        if due_date_arg is not None
+        else due_date_function(today)
+    )
+
     invoice = Invoice(
         id=invoice_number or uuid.uuid4(),
         total=total,
@@ -68,7 +119,14 @@ def generate_invoice(
         products=products,
     )
 
-    content = template.render(client=client, company=vili, invoice=invoice)
+    bank_account_details = bank_accounts_data[client_data["remit_to"]]
+
+    content = template.render(
+        client=client,
+        company=my_company,
+        invoice=invoice,
+        bank_account_details=bank_account_details,
+    )
 
     invoice_file = (
         f"{os.path.dirname(__file__)}/"
@@ -94,6 +152,8 @@ def main():
     data = json.load(open("data.json", "r"))
     client_data = data.get(client_name)
     company_data = data.get("mycompany")
+    bank_accounts_data = data.get("bank_accounts")
+    products_data = data.get("products")
 
     if not client_data:
         raise Exception(f"No client {client_name} found in our data.json")
@@ -108,7 +168,13 @@ def main():
     template = env.get_template(template)
 
     invoice = generate_invoice(
-        client_name, client_data, company_data, template, invoice_number
+        client_name,
+        client_data,
+        company_data,
+        products_data,
+        bank_accounts_data,
+        template,
+        invoice_number,
     )
 
     print(f"GENERATED INVOICE FOR {client_name}", f"file:///{invoice}")
