@@ -163,7 +163,7 @@
         <h4>Remit To</h4>
         <table class="table">
           <tbody>
-            {% for line in bank_account_details %}
+            {% for line in invoice.bank_account_details %}
             <tr>
               <td><b>{{ line['key'] }}:</b></td>
               <td style="text-align: right">{{ line['value'] }}</td>

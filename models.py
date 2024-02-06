@@ -22,18 +22,32 @@ MONTHS = (
 
 
 @dataclass
-class Company:
-    name: str = ""
-    document: str = ""
-    address: str = ""
-
-
-@dataclass
 class Product:
     name: str
     description: str
     quantity: int
     price: decimal.Decimal
+
+
+@dataclass
+class Company:
+    id: str
+    name: str = ""
+    document: str = ""
+    address: str = ""
+    products: List[Product] | List[str] | None = None
+
+    def parse_products(self, products_data: dict):
+        if self.products is not None:
+            self.products = [
+                Product(
+                    name=products_data[p]["name"],
+                    description=products_data[p]["description"],
+                    quantity=products_data[p]["quantity"],
+                    price=products_data[p]["price"],
+                )
+                for p in self.products
+            ]
 
 
 @dataclass
@@ -45,7 +59,9 @@ class Invoice:
     penalty: decimal.Decimal
     due_date: datetime.date
     issue_date: datetime.date
-    products: List[Product]
+    bank_account_details: dict
+    _from: Company
+    _to: Company
 
     @property
     def due_date_str(self):
