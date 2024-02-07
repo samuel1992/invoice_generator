@@ -31,7 +31,7 @@ class Product:
 
 @dataclass
 class Company:
-    id: str
+    id: str = ""
     name: str = ""
     document: str = ""
     address: str = ""
@@ -53,15 +53,25 @@ class Company:
 @dataclass
 class Invoice:
     id: uuid.UUID
-    total: decimal.Decimal
-    sub_total: decimal.Decimal
     discount: decimal.Decimal
     penalty: decimal.Decimal
     due_date: datetime.date
     issue_date: datetime.date
     bank_account_details: dict
-    _from: Company
-    _to: Company
+    company: Company
+    client: Company
+
+    @property
+    def total(self) -> decimal.Decimal:
+        return decimal.Decimal(
+            sum(p.price * p.quantity for p in self.client.products)
+            - self.discount
+            + self.penalty
+        )
+
+    @property
+    def sub_total(self) -> decimal.Decimal:
+        return decimal.Decimal(sum(p.price * p.quantity for p in self.client.products))
 
     @property
     def due_date_str(self):

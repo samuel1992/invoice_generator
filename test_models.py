@@ -20,6 +20,7 @@ class TestProduct(TestCase):
 class TestCompany(TestCase):
     def setUp(self) -> None:
         self.company = Company(
+            id="companykey",
             name="Company 1",
             document="123456789",
             address="Address 1",
@@ -59,14 +60,12 @@ class TestInvoice(TestCase):
     def test_create_invoice(self):
         invoice = Invoice(
             id="123456789",
-            total=1000.00,
-            sub_total=1000.00,
             discount=0.00,
             penalty=0.00,
             due_date="2021-09-30",
             issue_date="2021-09-01",
             bank_account_details={},
-            _from=Company(),
-            _to=Company(),
+            client=Company(),
+            company=Company(),
         )
         self.assertIsNotNone(invoice)

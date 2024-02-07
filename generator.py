@@ -7,11 +7,12 @@ import uuid
 import jinja2
 from dateutil import relativedelta
 
-from models import Company, Invoice, Product
+from models import Company, Invoice
 
 TODAY = datetime.date.today()
 
-def last_day_of_month():
+
+def last_day_of_month() -> datetime.date:
     # this will never fail
     # get close to the end of the month for any day, and add 4 days 'over'
     next_month = TODAY.replace(day=28) + datetime.timedelta(days=4)
@@ -21,16 +22,16 @@ def last_day_of_month():
     return next_month - datetime.timedelta(days=next_month.day)
 
 
-def next_month_at(day):
+def next_month_at(day) -> datetime.date:
     next_month = TODAY.replace(day=28) + datetime.timedelta(days=4)
     return next_month - datetime.timedelta(days=next_month.day - int(day))
 
 
-def specific_date(any_date: str):
+def specific_date(any_date: str) -> datetime.date:
     return datetime.datetime.strptime(any_date, "%Y-%m-%d").date()
 
 
-def in_months(months):
+def in_months(months) -> datetime.date:
     return TODAY + relativedelta.relativedelta(months=int(months))
 
 
@@ -43,6 +44,7 @@ DUE_DATES = {
 
 
 def _get_due_date_function_and_arg(due_date):
+
     due_date_function_name = due_date.split("-")
     if len(due_date_function_name) > 1:
         due_date_function = DUE_DATES[due_date_function_name[0]]
@@ -53,48 +55,21 @@ def _get_due_date_function_and_arg(due_date):
     return due_date_function, due_date_arg
 
 
-def generate_invoice(
-    my_company,
-    client,
-    due_date,
-    discount,
-    penalty,
-    bank_accounts_data,
-    template,
-    invoice_number=0,
-):
+def _get_due_date(due_date) -> datetime.date:
     due_date_function, due_date_arg = _get_due_date_function_and_arg(due_date)
-
-    sub_total = sum(p.price * p.quantity for p in client.products)
-    total = sum(p.price * p.quantity for p in client.products) - discount + penalty
     due_date = (
         due_date_function(due_date_arg)
         if due_date_arg is not None
         else due_date_function()
     )
 
-    invoice = Invoice(
-        id=invoice_number or uuid.uuid4(),
-        total=total,
-        sub_total=sub_total,
-        discount=discount,
-        penalty=penalty,
-        due_date=due_date,
-        issue_date=TODAY,
-        bank_account_details=bank_accounts_data,
-        _from=my_company,
-        _to=client,
-    )
 
-    content = template.render(
-        client=client,
-        company=my_company,
-        invoice=invoice,
-    )
+def generate_invoice(invoice, template):
+    content = template.render(invoice=invoice, client=invoice.client, company=invoice.company)
 
     invoice_file = (
         f"{os.path.dirname(__file__)}/"
-        f"invoices/{client.id}_{TODAY}_{due_date}_{invoice.id}.html"
+        f"invoices/{invoice.client.id}_{TODAY}_{invoice.due_date}_{invoice.id}.html"
     )
     with open(invoice_file, "a") as file:
         file.write(content)
@@ -148,16 +123,18 @@ def main():
     )
     client.parse_products(products_data)
 
-    invoice = generate_invoice(
-        my_company,
-        client,
-        client_data["due_date"],
-        client_data["discount"],
-        client_data["penalty"],
-        bank_accounts_data[client_data["remit_to"]],
-        template,
-        invoice_number,
+    invoice = Invoice(
+        id=invoice_number or uuid.uuid4(),
+        discount=client_data["discount"],
+        penalty=client_data["penalty"],
+        due_date=_get_due_date(client_data["due_date"]),
+        issue_date=TODAY,
+        bank_account_details=bank_accounts_data[client_data["remit_to"]],
+        company=my_company,
+        client=client,
     )
+
+    invoice = generate_invoice(invoice, template)
 
     print(f"GENERATED INVOICE FOR {client_name_key}", f"file:///{invoice}")
     os.system(f"open -a 'Google Chrome' file:///{invoice}")
