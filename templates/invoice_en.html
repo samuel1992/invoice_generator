@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <meta charset="UTF-8">
+    <title>{{client.name.replace(' ','_')}}_invoice_{{invoice.issue_date_str.replace('/','_')}}</title>
+    <style>
+    h6 {
+      color: #7f7f7f;
+      font-family: "museo sans 300", helvetica;
+      font-size: 12px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    h5 {
+      font-size: 13px;
+    }
+
+    h5, h6 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      box-sizing: border-box;
+      line-height: 1.1;
+      margin-top: -10px;
+      font-weight: 400;
+      margin-bottom: 15px;
+      font-family: "museo sans 300",helvetica;
+      color: #202020;
+      font-size: 18px;
+    }
+
+    .form-field {
+      margin-bottom: 15px;
+    }
+
+    .client-data {
+      background: #edeae3!important;
+      margin-bottom: 20px;
+    }
+
+    .invoice-identifier, .issue-date {
+      font-size: 10px;
+      line-height: 12px;
+      color: #a8a5a1;
+      margin-bottom: 20px;
+    }
+
+    .invoice {
+      max-width: 800px;
+    }
+
+    tbody {
+      line-height: 1.42857143;
+      font-family: "museo sans 100",helvetica;
+      color: #202020;
+      font-size: 13px;
+    }
+
+    .bank-details {
+      background-color: #edeae3!important;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container-sm invoice">
+      <div class="row">
+        <div class="col col-sm-4 issue-date">
+          <h6>Invoice N.: {{ invoice.id }}</h6>
+        </div>
+        <div class="col col-sm-4 issue-date">
+          <h6>Issue Date: {{ invoice.issue_date_str }}</h6>
+        </div>
+        <div class="col col-sm-4 issue-date">
+          <h6>Due Date: {{ invoice.due_date_str }}</h6>
+        </div>
+      </div>
+      <div class="row client-data">
+        <div class="col col-sm-6" style="padding-top: 10px">
+          <div class="form-field">
+            <h4>FROM</h4>
+            <h5>
+              {{ company.name }}
+            </h5>
+          </div>
+
+          <div class="form-field">
+            <h6>
+              Document 
+            </h6>
+            <h5>
+              {{ company.document }}
+            </h5>
+          </div>
+
+          <div class="form-field">
+            <h6>
+              Address 
+            </h6>
+            <h5>
+              {{ company.address }}
+            </h5>
+          </div>
+        </div>
+
+        <div class="col col-sm-6" style="padding-top: 10px">
+          <div class="form-field">
+            <h4>TO</h4>
+            <h5>{{ client.name }}</h5>
+          </div>
+
+          <div class="form-field">
+            <h6>Document</h6>
+            <h5>{{ client.document }}</h5>
+          </div>
+
+          <div class="form-field">
+            <h6>Address</h6>
+            <h5>{{ client.address }}</h5>
+          </div>
+        </div>
+      </div> 
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in client.products %}
+          <tr>
+            <td>
+              {{ product.name }}
+              {% if product.description is not none %}
+                <br>
+                ({{product.description}})
+              {% endif %}
+            </td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.price }}</td>
+            <td>$ {{ product.price * product.quantity }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <br>
+
+      <div class="row bank-details" style="padding-top: 10px">
+        <h4>Remit To</h4>
+        <table class="table">
+          <tbody>
+            {% for line in invoice.bank_account_details %}
+            <tr>
+              <td><b>{{ line['key'] }}:</b></td>
+              <td style="text-align: right">{{ line['value'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <br>
+      <br>
+
+      <h4 class="bigger" style="text-align: right">Invoice Total: $ {{ invoice.total }}</h4>
+    </div>
+  </body>
+</html>
