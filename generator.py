@@ -44,7 +44,6 @@ DUE_DATES = {
 
 
 def _get_due_date_function_and_arg(due_date):
-
     due_date_function_name = due_date.split("-")
     if len(due_date_function_name) > 1:
         due_date_function = DUE_DATES[due_date_function_name[0]]
@@ -57,7 +56,7 @@ def _get_due_date_function_and_arg(due_date):
 
 def _get_due_date(due_date) -> datetime.date:
     due_date_function, due_date_arg = _get_due_date_function_and_arg(due_date)
-    due_date = (
+    return (
         due_date_function(due_date_arg)
         if due_date_arg is not None
         else due_date_function()
