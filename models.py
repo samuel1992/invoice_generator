@@ -2,7 +2,7 @@ import datetime
 import decimal
 import uuid
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 MONTHS = (
     "",
@@ -35,19 +35,6 @@ class Company:
     name: str = ""
     document: str = ""
     address: str = ""
-    products: List[Product] | List[str] | None = None
-
-    def parse_products(self, products_data: dict):
-        if self.products is not None:
-            self.products = [
-                Product(
-                    name=products_data[p]["name"],
-                    description=products_data[p]["description"],
-                    quantity=products_data[p]["quantity"],
-                    price=products_data[p]["price"],
-                )
-                for p in self.products
-            ]
 
 
 @dataclass
@@ -60,18 +47,36 @@ class Invoice:
     bank_account_details: dict
     company: Company
     client: Company
+    products: Optional[List[Product]] = None
+
+    def add_products(self, products_data: List[dict]):
+        self.products = [
+            Product(
+                name=p["name"],
+                description=p["description"],
+                quantity=p["quantity"],
+                price=p["price"],
+            )
+            for p in products_data
+        ]
 
     @property
     def total(self) -> decimal.Decimal:
+        if not self.products:
+            raise ValueError("No products added to the invoice")
+
         return decimal.Decimal(
-            sum(p.price * p.quantity for p in self.client.products)
+            sum(p.price * p.quantity for p in self.products)
             - self.discount
             + self.penalty
         )
 
     @property
     def sub_total(self) -> decimal.Decimal:
-        return decimal.Decimal(sum(p.price * p.quantity for p in self.client.products))
+        if not self.products:
+            raise ValueError("No products added to the invoice")
+
+        return decimal.Decimal(sum(p.price * p.quantity for p in self.products))
 
     @property
     def due_date_str(self):

@@ -10,6 +10,18 @@ from dateutil import relativedelta
 from models import Company, Invoice
 
 TODAY = datetime.date.today()
+HELP_MESSAGE = """
+Usage: generator.py <command> [<args>]
+Available commands:
+    generate-invoice    Generate an invoice for a client
+        --client          The client to generate invoice
+        --products        The products to invoice
+        --invoice-number  Invoice number
+        --template        Template for invoice
+    list-products       List all available products
+    list-clients        List all available clients
+    list-invoices       List all available invoices
+"""
 
 
 def last_day_of_month() -> datetime.date:
@@ -63,8 +75,10 @@ def _get_due_date(due_date) -> datetime.date:
     )
 
 
-def generate_invoice(invoice, template):
-    content = template.render(invoice=invoice, client=invoice.client, company=invoice.company)
+def generate_invoice_html_file(invoice, template):
+    content = template.render(
+        invoice=invoice, client=invoice.client, company=invoice.company
+    )
 
     invoice_file = (
         f"{os.path.dirname(__file__)}/"
@@ -76,22 +90,39 @@ def generate_invoice(invoice, template):
     return invoice_file
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--client", help="The client to generate invoice")
-    parser.add_argument("--invoice-number", help="Invoice number")
-    parser.add_argument("--template", help="Template for invoice")
-    args = parser.parse_args()
+def list_products():
+    data = json.load(open("data.json", "r"))
+    products = data.get("products")
+    for product in products:
+        print(
+            f"{product} - {products[product]['name']} - ${products[product]['price']}"
+        )
 
+
+def list_clients():
+    data = json.load(open("data.json", "r"))
+    clients = data.get("clients")
+    for client in clients:
+        print(f"{client} - {clients[client]['name']}")
+
+
+def list_invoices():
+    invoices = os.listdir(f"{os.path.dirname(__file__)}/invoices/")
+    for invoice in invoices:
+        print(invoice)
+
+
+def generate_invoice(args):
     client_name_key = args.client
+    products = args.products.split(",")
     invoice_number = args.invoice_number
     template = args.template
 
     data = json.load(open("data.json", "r"))
 
-    client_data = data.get(client_name_key)
+    client_data = data.get("clients", {}).get(client_name_key)
     company_data = data.get("mycompany")
-    bank_accounts_data = data.get("bank_accounts")
+    remit_information = data.get("remit_information")
     products_data = data.get("products")
 
     if not client_data:
@@ -118,9 +149,7 @@ def main():
         name=client_data["name"],
         document=client_data["document"],
         address=client_data["address"],
-        products=client_data["products"],
     )
-    client.parse_products(products_data)
 
     invoice = Invoice(
         id=invoice_number or uuid.uuid4(),
@@ -128,15 +157,58 @@ def main():
         penalty=client_data["penalty"],
         due_date=_get_due_date(client_data["due_date"]),
         issue_date=TODAY,
-        bank_account_details=bank_accounts_data[client_data["remit_to"]],
+        bank_account_details=remit_information[client_data["remit_to"]],
         company=my_company,
         client=client,
     )
+    products_to_add = []
+    for product in products:
+        product_data = products_data[product.split(" ")[0]]
+        product_data["quantity"] = int(product.split(" ")[1])
+        products_to_add.append(product_data)
+    invoice.add_products(products_to_add)
 
-    invoice = generate_invoice(invoice, template)
+    invoice_html = generate_invoice_html_file(invoice, template)
 
-    print(f"GENERATED INVOICE FOR {client_name_key}", f"file:///{invoice}")
-    os.system(f"open -a 'Google Chrome' file:///{invoice}")
+    print(f"GENERATED INVOICE FOR {client_name_key}", f"file:///{invoice_html}")
+    os.system(f"open -a 'Google Chrome' file:///{invoice_html}")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", help="The command to run", nargs="?")
+    subparsers = parser.add_subparsers(dest="command")
+
+    invoice_generator_parser = subparsers.add_parser("generate-invoice")
+
+    invoice_generator_parser.add_argument(
+        "--client", help="The client to generate invoice"
+    )
+    invoice_generator_parser.add_argument("--products", help="The products to invoice")
+    invoice_generator_parser.add_argument("--invoice-number", help="Invoice number")
+    invoice_generator_parser.add_argument("--template", help="Template for invoice")
+
+    open_invoice_parser = subparsers.add_parser("open-invoice")
+    open_invoice_parser.add_argument("--invoice", help="The invoice to open")
+
+    subparsers.add_parser("list-products")
+    subparsers.add_parser("list-clients")
+    subparsers.add_parser("list-invoices")
+
+    args = parser.parse_args()
+
+    if args.command == "generate-invoice":
+        generate_invoice(args)
+    elif args.command == "list-products":
+        list_products()
+    elif args.command == "list-clients":
+        list_clients()
+    elif args.command == "list-invoices":
+        list_invoices()
+    elif args.command == "open-invoice":
+        os.system(
+            f"open -a 'Google Chrome' file:///{os.path.dirname(__file__)}/invoices/{args.invoice}"
+        )
 
 
 if __name__ == "__main__":

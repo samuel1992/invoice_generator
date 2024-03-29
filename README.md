@@ -32,13 +32,14 @@ pip install Jinja2 python-dateutil
 3. **Generate an Invoice**: Run the script with the required arguments:
 
 ```sh
-python generate_invoice.py --client CLIENT_KEY --invoice-number INVOICE_NUMBER --template TEMPLATE_NAME.html
+python generate_invoice.py generate-invoice --client CLIENT_KEY --invoice-number INVOICE_NUMBER --template TEMPLATE_NAME.html --products 'PRODUCT1 QUANTITY,PRODUCT2 QUANTITY,PRODUCT3 QUANTITY'
 # if you dont use invoice-number it will generate a uuid as the invoice identifier
 ```
 
 - `CLIENT_KEY`: The key for the client's data in `data.json`.
 - `INVOICE_NUMBER`: Unique identifier for the invoice. If omitted, a UUID will be generated.
 - `TEMPLATE_NAME.html`: Name of the Jinja2 template file to use.
+- `PRODUCT1 QUANTITY...`.: List of products and their quantities to include in the invoice.
 
 The script will generate an HTML file for the invoice and open it in Google Chrome.
 
@@ -47,6 +48,15 @@ The script will generate an HTML file for the invoice and open it in Google Chro
 - `--client`: Specifies the client for which to generate an invoice. This should match a key in `data.json`.
 - `--invoice-number`: (Optional) Specifies the invoice number. If not provided, a UUID will be generated.
 - `--template`: The Jinja2 template file to use for generating the invoice.
+
+## Other Commands
+You can also use the following commands:
+- `list-clients`: List all clients available in the `data.json` file.
+- `list-products`: List all products available in the `data.json` file.
+- `list-invoices`: List all invoices available in the `invoices` directory.
+- `open-invoice`: Open an invoice in chrome. You need to provide the invoice file name as an argument `--invoice`. Ex: `python generate_invoice.py open-invoice --invoice INVOICE_FILE_NAME.html`
+
+```sh
 
 ## Data Format
 

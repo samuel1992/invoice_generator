@@ -3,14 +3,14 @@
 # be happy
 
 {
-    "bank_accounts": { # THIS SHOULD ALWAYS EXISTS, IT WILL BE LISTED IN THE "REMIT TO" SECTION 
-      "some_bank_info": {
+    "remit_information": { # THIS SHOULD ALWAYS EXISTS, IT WILL BE LISTED IN THE "REMIT TO" SECTION 
+      "some_bank_info": [
         {"key": "Bank Name", "value": "Some Bank"},
         {"key": "Type", "value": "Banking Account"},
         {"key": "Document", "value": "000.000.000-00"},
         {"key": "Branch", "value": "0001"},
         {"key": "Account", "value": "11111100000-11"},
-      }
+      ]
     },
     "mycompany": { # THIS SHOULD ALWAYS EXIST WITH YOUR COMPANY DETAILS
       "name": "My company name ltda",
@@ -30,25 +30,27 @@
         "quantity": 1,
         "price": 200.00
       }
-    }
-    "someclient": {
-        "name": "some client name",
-        "document": "XX.XX.***/****-XX",
-        "address": "Some adress here, 33",
-        "invoice_data":{
-          "remit_to: "some_bank_info", # BANK ACCOUNT TO DEPOSIT THE AMOUNT
-          "discount": 0.00,
-          "penalty": 0.00,
-          "products": [
-            "product_a", 
-            "product_b"
-          ],
-          "due_date": "last_day_of_month" # Options here are: 
-                                                             - `last_day_of_month`,
-                                                             - `next_month_at-DAYHERE`,
-                                                             - `specific_date-YEAR-MONTH-DAY`,
-                                                             - `in_months-NUMBEROFMONTHS`
-        }
+    },
+    "clients": {
+      "someclient": {
+          "name": "some client name",
+          "document": "XX.XX.***/****-XX",
+          "address": "Some adress here, 33",
+          "invoice_data":{
+            "remit_to: "some_bank_info", # BANK ACCOUNT TO DEPOSIT THE AMOUNT
+            "discount": 0.00,
+            "penalty": 0.00,
+            "products": [
+              "product_a", 
+              "product_b"
+            ],
+            "due_date": "last_day_of_month" # Options here are: 
+                                                               - `last_day_of_month`,
+                                                               - `next_month_at-DAYHERE`,
+                                                               - `specific_date-YEAR-MONTH-DAY`,
+                                                               - `in_months-NUMBEROFMONTHS`
+          }
+      }
     }
 }
   
