@@ -1,3 +1,18 @@
+"""
+Usage: generator.py <command> [<args>]
+Available commands:
+    new-invoice         Generate an invoice for a client
+        --client          The client to generate invoice
+        --products        The products to invoice
+        --invoice-number  Invoice number
+        --template        Template for invoice
+    open-invoice        Open the invoice passed
+        --invoice         The invoice file name to open
+    list-products       List all available products
+    list-clients        List all available clients
+    list-invoices       List all available invoices
+"""
+
 import argparse
 import datetime
 import json
@@ -10,18 +25,6 @@ from dateutil import relativedelta
 from models import Company, Invoice
 
 TODAY = datetime.date.today()
-HELP_MESSAGE = """
-Usage: generator.py <command> [<args>]
-Available commands:
-    generate-invoice    Generate an invoice for a client
-        --client          The client to generate invoice
-        --products        The products to invoice
-        --invoice-number  Invoice number
-        --template        Template for invoice
-    list-products       List all available products
-    list-clients        List all available clients
-    list-invoices       List all available invoices
-"""
 
 
 def last_day_of_month() -> datetime.date:
@@ -180,11 +183,10 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     new_invoice_parser = subparsers.add_parser("new-invoice")
-
+    new_invoice_parser.add_argument("--client", help="The client to generate invoice")
     new_invoice_parser.add_argument(
-        "--client", help="The client to generate invoice"
+        "--products", type=str, help="The products to invoice"
     )
-    new_invoice_parser.add_argument("--products", type=str, help="The products to invoice")
     new_invoice_parser.add_argument("--invoice-number", help="Invoice number")
     new_invoice_parser.add_argument("--template", help="Template for invoice")
 
@@ -197,18 +199,15 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "generate-invoice":
-        generate_invoice(args)
-    elif args.command == "list-products":
-        list_products()
-    elif args.command == "list-clients":
-        list_clients()
-    elif args.command == "list-invoices":
-        list_invoices()
-    elif args.command == "open-invoice":
-        os.system(
+    {
+        "new-invoice": generate_invoice(args),
+        "open-invoice": os.system(
             f"open -a 'Google Chrome' file:///{os.path.dirname(__file__)}/invoices/{args.invoice}"
-        )
+        ),
+        "list-products": list_products(),
+        "list-clients": list_clients(),
+        "list-invoices": list_invoices(),
+    }.get(args.command)
 
 
 if __name__ == "__main__":
