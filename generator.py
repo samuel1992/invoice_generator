@@ -184,7 +184,7 @@ def main():
     invoice_generator_parser.add_argument(
         "--client", help="The client to generate invoice"
     )
-    invoice_generator_parser.add_argument("--products", help="The products to invoice")
+    invoice_generator_parser.add_argument("--products", type=str, help="The products to invoice")
     invoice_generator_parser.add_argument("--invoice-number", help="Invoice number")
     invoice_generator_parser.add_argument("--template", help="Template for invoice")
 
