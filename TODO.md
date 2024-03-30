@@ -1,19 +1,5 @@
 # INVOICE GENERATOR
-
 A simple system to create invoices to charge your clients.
-
-## REQUIREMENTS
-
-- should save the invoices sent with datetime etc
-- we should able to add products dinamically to it
-
-## ENTITIES
-
-- invoice
-- client
-- product
-- bank_account
-
 
 ## TODO
 - add sqlite as database (have to see where to store it in a safe way, maybe in the same folder initially)
@@ -25,4 +11,4 @@ A simple system to create invoices to charge your clients.
     - add clients
     - add bank accounts
     - create invoices passing the client, products and bank account
-- maybe a setup to install it in worder to be a command line tool
+- maybe a setup to install it in way to be a command line tool
