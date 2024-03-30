@@ -179,14 +179,14 @@ def main():
     parser.add_argument("command", help="The command to run", nargs="?")
     subparsers = parser.add_subparsers(dest="command")
 
-    invoice_generator_parser = subparsers.add_parser("generate-invoice")
+    new_invoice_parser = subparsers.add_parser("new-invoice")
 
-    invoice_generator_parser.add_argument(
+    new_invoice_parser.add_argument(
         "--client", help="The client to generate invoice"
     )
-    invoice_generator_parser.add_argument("--products", type=str, help="The products to invoice")
-    invoice_generator_parser.add_argument("--invoice-number", help="Invoice number")
-    invoice_generator_parser.add_argument("--template", help="Template for invoice")
+    new_invoice_parser.add_argument("--products", type=str, help="The products to invoice")
+    new_invoice_parser.add_argument("--invoice-number", help="Invoice number")
+    new_invoice_parser.add_argument("--template", help="Template for invoice")
 
     open_invoice_parser = subparsers.add_parser("open-invoice")
     open_invoice_parser.add_argument("--invoice", help="The invoice to open")

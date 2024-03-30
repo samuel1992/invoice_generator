@@ -12,3 +12,4 @@ A simple system to create invoices to charge your clients.
     - add bank accounts
     - create invoices passing the client, products and bank account
 - maybe a setup to install it in way to be a command line tool
+
