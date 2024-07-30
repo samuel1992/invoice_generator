@@ -49,6 +49,7 @@ The script will generate an HTML file for the invoice and open it in Google Chro
 - `--client`: Specifies the client for which to generate an invoice. This should match a key in `data.json`.
 - `--invoice-number`: (Optional) Specifies the invoice number. If not provided, a UUID will be generated.
 - `--template`: The Jinja2 template file to use for generating the invoice.
+- `--products`: (Optional) List of products and quantities to include in the invoice. If not provided, the products listed in the client's data will be used.
 
 ## Other Commands
 You can also use the following commands:
@@ -56,10 +57,6 @@ You can also use the following commands:
 - `list-products`: List all products available in the `data.json` file.
 - `list-invoices`: List all invoices available in the `invoices` directory.
 - `open-invoice`: Open an invoice in chrome. You need to provide the invoice file name as an argument `--invoice`. Ex: `python generate_invoice.py open-invoice --invoice INVOICE_FILE_NAME.html`
-
-```sh
-
-## Data Format
 
 Your `data.json` should follow this structure:
 
