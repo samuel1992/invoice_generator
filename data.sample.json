@@ -1,56 +1,101 @@
 # SAMPLE data. Remove the comentaries and update the client/products stuff
-# after data rename this file to `data.json`
-# be happy
+# after that rename this file to `data.json`
+# 
 
 {
-    "remit_information": { # THIS SHOULD ALWAYS EXISTS, IT WILL BE LISTED IN THE "REMIT TO" SECTION 
-      "some_bank_info": [
-        {"key": "Bank Name", "value": "Some Bank"},
-        {"key": "Type", "value": "Banking Account"},
-        {"key": "Document", "value": "000.000.000-00"},
-        {"key": "Branch", "value": "0001"},
-        {"key": "Account", "value": "11111100000-11"},
+  "mycompany": {
+    "name": "Tech Solutions Ltd.",
+    "document": "00.000.000/0000-00",
+    "address": "123 Tech Street, Suite 4, Metropolis, 12345-678, Country"
+  },
+  "remit_information": {
+    "company_bank": [
+      {"key": "#", "value": "Tech Solutions Ltd."},
+      {"key": "CNPJ", "value": "00.000.000/0000-00"},
+      {"key": "Banco", "value": "Example Bank"},
+      {"key": "Tipo Conta", "value": "Corrente"},
+      {"key": "Ag.:", "value": "1234"},
+      {"key": "Cc.:", "value": "12345678-9"}
+    ],
+    "personal_bank": [
+      {"key": "Type", "value": "Banking Account"},
+      {"key": "Account Holder", "value": "John Doe"},
+      {"key": "WIRE Routing Number", "value": "123456789"},
+      {"key": "ACH Routing Number", "value": "987654321"},
+      {"key": "Bank Code", "value": "Sample Federal Savings Bank"},
+      {"key": "Account", "value": "123456789012"},
+      {"key": "Bank Address", "value": "456 Bank Avenue, Bank City, BC 78901"},
+      {"key": "Personal Address", "value": "789 Personal Lane, Apt 101, Home City, HC 65432"}
+    ]
+  },
+  "products": {
+    "cloud_service": {
+      "name": "Cloud Hosting Service",
+      "description": "Provision of cloud hosting services for the period.",
+      "quantity": 1,
+      "price": 500.00
+    },
+    "web_development": {
+      "name": "Web Development",
+      "description": "Development of company website.",
+      "quantity": 1,
+      "price": 1500.00
+    },
+    "consulting_service": {
+      "name": "IT Consulting",
+      "description": "IT consulting services for business optimization.",
+      "quantity": 1,
+      "price": 300.00
+    },
+    "maintenance_service": {
+      "name": "System Maintenance",
+      "description": "Monthly system maintenance services.",
+      "quantity": 1,
+      "price": 200.00
+    }
+  },
+  "clients": {
+    "alpha_corp": {
+      "name": "Alpha Corporation",
+      "document": "00.000.000/0000-01",
+      "address": "101 Alpha Road, Alpha City, AC 12345",
+      "discount": 0.00,
+      "penalty": 0.00,
+      "due_date": "last_day_of_month",
+      "remit_to": "company_bank",
+      "products": [
+        "cloud_service",
+        "maintenance_service"
       ]
     },
-    "mycompany": { # THIS SHOULD ALWAYS EXIST WITH YOUR COMPANY DETAILS
-      "name": "My company name ltda",
-      "document": "000.000.000-00",
-      "address": "Av Something, 10, Brazil - SP",
+    "beta_inc": {
+      "name": "Beta Incorporated",
+      "document": "00.000.000/0000-02",
+      "address": "202 Beta Boulevard, Beta Town, BT 67890",
+      "discount": 0.00,
+      "penalty": 0.00,
+      "due_date": "in_months-2",
+      "remit_to": "personal_bank",
+      "products": [
+        "web_development"
+      ]
     },
-    "products": {
-      "product_a": {
-        "name": "Product A",
-        "description": "some description",
-        "quantity": 2,
-        "price": 600.00
-      },
-      "product_b": {
-        "name": "Product B",
-        "description": null, # IF NULL WE DONT SHOW ON THE INVOICE
-        "quantity": 1,
-        "price": 200.00
-      }
-    },
-    "clients": {
-      "someclient": {
-          "name": "some client name",
-          "document": "XX.XX.***/****-XX",
-          "address": "Some adress here, 33",
-          "invoice_data":{
-            "remit_to: "some_bank_info", # BANK ACCOUNT TO DEPOSIT THE AMOUNT
-            "discount": 0.00,
-            "penalty": 0.00,
-            "products": [
-              "product_a", 
-              "product_b"
-            ],
-            "due_date": "last_day_of_month" # Options here are: 
-                                                               - `last_day_of_month`,
-                                                               - `next_month_at-DAYHERE`,
-                                                               - `specific_date-YEAR-MONTH-DAY`,
-                                                               - `in_months-NUMBEROFMONTHS`
-          }
-      }
+    "gamma_llc": {
+      "name": "Gamma LLC",
+      "document": "00.000.000/0000-03",
+      "address": "303 Gamma Street, Gamma Village, GV 11223",
+      "discount": 0.00,
+      "penalty": 0.00,
+      "due_date": "last_day_of_month",
+      "remit_to": "personal_bank",
+      "products": [
+        "consulting_service"
+      ]
     }
+  }
 }
-  
+# `due_date` options:
+# - `last_day_of_month`,
+# - `next_month_at-DAYHERE`,
+# - `specific_date-YEAR-MONTH-DAY`,
+# - `in_months-NUMBEROFMONTHS`

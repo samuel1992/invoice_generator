@@ -34,6 +34,7 @@ pip install Jinja2 python-dateutil
 ```sh
 python generate_invoice.py generate-invoice --client CLIENT_KEY --invoice-number INVOICE_NUMBER --template TEMPLATE_NAME.html --products 'PRODUCT1 QUANTITY,PRODUCT2 QUANTITY,PRODUCT3 QUANTITY'
 # if you dont use invoice-number it will generate a uuid as the invoice identifier
+# if you dont use products it will generate with the products that are in the client `products` key
 ```
 
 - `CLIENT_KEY`: The key for the client's data in `data.json`.
@@ -65,28 +66,59 @@ Your `data.json` should follow this structure:
 ```json
 {
   "mycompany": {
-    "name": "Your Company Name",
-    "document": "Your Company Document",
-    "address": "Your Company Address"
+    "name": "Tech Solutions Ltd.",
+    "document": "00.000.000/0000-00",
+    "address": "123 Tech Street, Suite 4, Metropolis, 12345-678, Country"
   },
-  "bank_accounts": {
-    "account_details": "Your Bank Account Details"
+  "remit_information": {
+    "company_bank": [
+      {"key": "#", "value": "Tech Solutions Ltd."},
+      {"key": "DOCUMENT", "value": "00.000.000/0000-00"},
+      {"key": "Banco", "value": "Example Bank"},
+      {"key": "Account Type", "value": "Savings"},
+      {"key": "Branch Number:", "value": "1234"},
+      {"key": "Account Number:", "value": "12345678-9"}
+    ]
   },
   "products": {
-    "product1": {
-      "name": "Product Name",
-      "price": 100
+    "cloud_service": {
+      "name": "Cloud Hosting Service",
+      "description": "Provision of cloud hosting services for the period.",
+      "quantity": 1,
+      "price": 500.00
+    },
+    "web_development": {
+      "name": "Web Development",
+      "description": "Development of company website.",
+      "quantity": 1,
+      "price": 1500.00
     }
   },
-  "client_key": {
-    "name": "Client Name",
-    "document": "Client Document",
-    "address": "Client Address",
-    "products": ["product1"],
-    "discount": 10,
-    "penalty": 5,
-    "due_date": "specific_date-YYYY-MM-DD",
-    "remit_to": "account_details"
+  "clients": {
+    "alpha_corp": {
+      "name": "Alpha Corporation",
+      "document": "00.000.000/0000-01",
+      "address": "101 Alpha Road, Alpha City, AC 12345",
+      "discount": 0.00,
+      "penalty": 0.00,
+      "due_date": "last_day_of_month",
+      "remit_to": "company_bank",
+      "products": [
+        "cloud_service"
+      ]
+    },
+    "beta_inc": {
+      "name": "Beta Incorporated",
+      "document": "00.000.000/0000-02",
+      "address": "202 Beta Boulevard, Beta Town, BT 67890",
+      "discount": 0.00,
+      "penalty": 0.00,
+      "due_date": "in_months-2",
+      "remit_to": "personal_bank",
+      "products": [
+        "web_development"
+      ]
+    }
   }
 }
 ```
